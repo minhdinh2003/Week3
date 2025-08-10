@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BookEventWorker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+50ec8962f4580ef876d5609cebf1d41d0a127547")]
 [assembly: System.Reflection.AssemblyProductAttribute("BookEventWorker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BookEventWorker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

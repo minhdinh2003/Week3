@@ -223,3 +223,4 @@
 /home/minhdinh/Downloads/Week2-Exam-main/Week3/bin/Debug/net9.0/BookWorkerService/bin/Debug/net9.0/appsettings.json
 /home/minhdinh/Downloads/Week2-Exam-main/Week3/bin/Debug/net9.0/BookWorkerService/bin/Debug/net9.0/BookWorkerService.deps.json
 /home/minhdinh/Downloads/Week2-Exam-main/Week3/bin/Debug/net9.0/BookWorkerService/bin/Debug/net9.0/BookWorkerService.runtimeconfig.json
+/home/minhdinh/Downloads/Week2-Exam-main/Week3/obj/Debug/net9.0/Week3.sourcelink.json

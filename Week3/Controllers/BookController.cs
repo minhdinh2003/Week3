@@ -10,7 +10,7 @@ namespace Week3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+
 public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, IMapper mapper, IPublishEndpoint publishEndpoint) : ControllerBase
 {
     private readonly string _bookListCacheKey = "book_list";
@@ -31,6 +31,7 @@ public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, 
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         var cacheKey = $"book_{id}";
@@ -48,6 +49,7 @@ public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, 
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(BookDto bookDto)
     {
         try
@@ -73,6 +75,7 @@ public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, 
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, BookDto bookDto)
     {
         try
@@ -88,7 +91,7 @@ public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, 
             await cacheService.RemoveAsync($"book_{id}");
             return NoContent();
         }
-        catch (Exception )
+        catch (Exception)
         {
             // Log the exception (not shown here)
             return StatusCode(500, "Internal server error");
@@ -96,6 +99,7 @@ public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, 
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         try

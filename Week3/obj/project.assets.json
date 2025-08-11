@@ -6896,11 +6896,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/minhdinh/Downloads/Week2-Exam-main/Week3/Week3.csproj",
+      "projectUniqueName": "/home/minhdinh/Downloads/Week3/Week3/Week3.csproj",
       "projectName": "Week3",
-      "projectPath": "/home/minhdinh/Downloads/Week2-Exam-main/Week3/Week3.csproj",
+      "projectPath": "/home/minhdinh/Downloads/Week3/Week3/Week3.csproj",
       "packagesPath": "/home/minhdinh/.nuget/packages/",
-      "outputPath": "/home/minhdinh/Downloads/Week2-Exam-main/Week3/obj/",
+      "outputPath": "/home/minhdinh/Downloads/Week3/Week3/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/minhdinh/.nuget/NuGet/NuGet.Config"

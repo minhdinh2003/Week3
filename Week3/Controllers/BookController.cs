@@ -11,7 +11,7 @@ namespace Week3.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, IMapper mapper, IPublishEndpoint publishEndpoint) : ControllerBase
+public class BookController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheService, IMapper mapper, IPublishEndpoint publishEndpoint) : ControllerBase
 {
     private readonly string _bookListCacheKey = "book_list";
     private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
@@ -31,7 +31,6 @@ public class BookController(IUnitOfWork unitOfWork, IRedisService cacheService, 
     }
 
     [HttpGet("{id}")]
-    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         var cacheKey = $"book_{id}";

@@ -5,6 +5,7 @@ using Week3.Dto;
 using Week3.MongoModels;
 using Week3.Repository.Interface;
 using Week3.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Week3.Controllers;
 
@@ -21,6 +22,7 @@ public class ReviewController(
     private readonly IReviewRepository _reviewRepository = reviewRepository;
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> CreateReview([FromBody] ReviewDto reviewDto)
     {
         var book = await _context.Books.FindAsync(reviewDto.BookId);

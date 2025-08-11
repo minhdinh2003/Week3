@@ -5,12 +5,13 @@ using StackExchange.Redis;
 using System.Text.Json;
 using AutoMapper;
 using Week3.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Week3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReviewerController(IUnitOfWork unitOfWork, IConnectionMultiplexer redis, IMapper mapper) : ControllerBase
+public class ReviewerController(IUnitOfWorkMsSql unitOfWork, IConnectionMultiplexer redis, IMapper mapper) : ControllerBase
 {
     private readonly IDatabase _cache = redis.GetDatabase();
     private const string CacheKey = "reviewers";
@@ -57,6 +58,7 @@ public class ReviewerController(IUnitOfWork unitOfWork, IConnectionMultiplexer r
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(ReviewerDto reviewerDto)
     {
         var mappedEntity = mapper.Map<Reviewer>(reviewerDto);
@@ -67,6 +69,7 @@ public class ReviewerController(IUnitOfWork unitOfWork, IConnectionMultiplexer r
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, ReviewerDto reviewerDto)
     {
         if (id != reviewerDto.Id) return BadRequest();
@@ -84,6 +87,7 @@ public class ReviewerController(IUnitOfWork unitOfWork, IConnectionMultiplexer r
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var reviewer = await unitOfWork.Reviewers.GetByIdAsync(id);

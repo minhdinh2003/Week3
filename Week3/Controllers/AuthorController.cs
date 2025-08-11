@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Week3.Dto;
 using Week3.Models;
@@ -8,7 +9,7 @@ namespace Week3.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthorController(IUnitOfWork unitOfWork, IRedisService cacheService, IMapper mapper) : ControllerBase
+public class AuthorController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheService, IMapper mapper) : ControllerBase
 {
     private readonly string _authorListCacheKey = "author_list";
 
@@ -35,48 +36,54 @@ public class AuthorController(IUnitOfWork unitOfWork, IRedisService cacheService
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        try{
-        var cacheKey = $"author_{id}";
-        var cachedAuthor = await cacheService.GetAsync<AuthorDto>(cacheKey);
-        if (cachedAuthor != null)
-            return Ok(cachedAuthor);
+        try
+        {
+            var cacheKey = $"author_{id}";
+            var cachedAuthor = await cacheService.GetAsync<AuthorDto>(cacheKey);
+            if (cachedAuthor != null)
+                return Ok(cachedAuthor);
 
-        var author = await unitOfWork.Authors.GetByIdAsync(id);
-        if (author == null) return NotFound();
+            var author = await unitOfWork.Authors.GetByIdAsync(id);
+            if (author == null) return NotFound();
 
-        var authorDto = mapper.Map<AuthorDto>(author);
-        await cacheService.SetAsync(cacheKey, authorDto, TimeSpan.FromMinutes(1));
+            var authorDto = mapper.Map<AuthorDto>(author);
+            await cacheService.SetAsync(cacheKey, authorDto, TimeSpan.FromMinutes(1));
 
-        return Ok(authorDto);
-        } catch (Exception ex)
+            return Ok(authorDto);
+        }
+        catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 
     [HttpGet("with-books/{id}")]
+    [Authorize]
     public async Task<IActionResult> GetAuthorWithBooks(int id)
     {
-        try{
-        var cacheKey = $"author_with_books_{id}";
-        var cached = await cacheService.GetAsync<AuthorDto>(cacheKey);
-        if (cached != null)
-            return Ok(cached);
+        try
+        {
+            var cacheKey = $"author_with_books_{id}";
+            var cached = await cacheService.GetAsync<AuthorDto>(cacheKey);
+            if (cached != null)
+                return Ok(cached);
 
-        var author = await unitOfWork.Authors.GetAuthorWithBooksAsync(id);
-        if (author == null) return NotFound();
+            var author = await unitOfWork.Authors.GetAuthorWithBooksAsync(id);
+            if (author == null) return NotFound();
 
-        var authorDto = mapper.Map<AuthorDto>(author);
-        await cacheService.SetAsync(cacheKey, authorDto, TimeSpan.FromMinutes(1));
+            var authorDto = mapper.Map<AuthorDto>(author);
+            await cacheService.SetAsync(cacheKey, authorDto, TimeSpan.FromMinutes(1));
 
-        return Ok(authorDto);
-        } catch (Exception ex)
+            return Ok(authorDto);
+        }
+        catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(AuthorDto authorDto)
     {
         try
@@ -88,34 +95,39 @@ public class AuthorController(IUnitOfWork unitOfWork, IRedisService cacheService
             await cacheService.RemoveAsync(_authorListCacheKey);
 
             return CreatedAtAction(nameof(GetById), new { id = author.Id }, mapper.Map<AuthorDto>(author));
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, AuthorDto authorDto)
     {
-        try{
-        if (id != authorDto.Id) return BadRequest();
+        try
+        {
+            if (id != authorDto.Id) return BadRequest();
 
-        var author = mapper.Map<Author>(authorDto);
-        unitOfWork.Authors.Update(author);
-        await unitOfWork.SaveChangesAsync();
+            var author = mapper.Map<Author>(authorDto);
+            unitOfWork.Authors.Update(author);
+            await unitOfWork.SaveChangesAsync();
 
-        await cacheService.RemoveAsync(_authorListCacheKey);
-        await cacheService.RemoveAsync($"author_{id}");
-        await cacheService.RemoveAsync($"author_with_books_{id}");
+            await cacheService.RemoveAsync(_authorListCacheKey);
+            await cacheService.RemoveAsync($"author_{id}");
+            await cacheService.RemoveAsync($"author_with_books_{id}");
 
-        return NoContent();
-        }  catch (Exception ex)
+            return NoContent();
+        }
+        catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var author = await unitOfWork.Authors.GetByIdAsync(id);

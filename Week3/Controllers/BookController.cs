@@ -23,7 +23,7 @@ public class BookController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheServ
         if (cachedBooks != null)
             return Ok(cachedBooks);
 
-        var books = await unitOfWork.Books.GetAllAsync();
+        var books = await unitOfWork.Books.GetBooks();
         var bookDtos = mapper.Map<IEnumerable<BookDto>>(books);
 
         await cacheService.SetAsync(_bookListCacheKey, bookDtos, TimeSpan.FromMinutes(1));
@@ -38,7 +38,7 @@ public class BookController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheServ
         if (cachedBook != null)
             return Ok(cachedBook);
 
-        var book = await unitOfWork.Books.GetByIdAsync(id);
+        var book = await unitOfWork.Books.GetBookById(id);
         if (book == null) return NotFound();
 
         var bookDto = mapper.Map<Book>(book);
@@ -54,7 +54,7 @@ public class BookController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheServ
         try
         {
             var book = mapper.Map<Book>(bookDto);
-            await unitOfWork.Books.AddAsync(book);
+            await unitOfWork.Books.CreateBook(book);
             await unitOfWork.SaveChangesAsync();
             var bookEvent = new CreateBookRequest
             {
@@ -82,7 +82,7 @@ public class BookController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheServ
             if (id != bookDto.Id) return BadRequest();
 
             var book = mapper.Map<Book>(bookDto);
-            unitOfWork.Books.Update(book);
+            unitOfWork.Books.UpdateBook(book);
             await unitOfWork.SaveChangesAsync();
 
             // Clear related cache
@@ -103,10 +103,10 @@ public class BookController(IUnitOfWorkMsSql unitOfWork, IRedisService cacheServ
     {
         try
         {
-            var book = await unitOfWork.Books.GetByIdAsync(id);
+            var book = await unitOfWork.Books.GetBookById(id);
             if (book == null) return NotFound();
 
-            await unitOfWork.Books.DeleteBookAndReviewsAsync(id);
+            unitOfWork.Books.RemoveBook(book);
             await unitOfWork.SaveChangesAsync();
 
             // Clear related cache

@@ -2,3 +2,4 @@ bin/
 obj/
 *.log
 bin/Debug/net9.0
+*.http

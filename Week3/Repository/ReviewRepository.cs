@@ -26,6 +26,6 @@ public class ReviewRepository : IReviewRepository
         _collection.Find(r => r.Reviewer.Id == reviewerId).ToListAsync();
 
     public Task AddAsync(Review review) => _collection.InsertOneAsync(review);
-    
 
+    public Task RemoveByBookIdAsync(int bookId) => _collection.DeleteManyAsync(r => r.BookId == bookId);
 }

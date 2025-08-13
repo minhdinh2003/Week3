@@ -9,4 +9,5 @@ public interface IReviewRepository
     Task<List<Review>> GetByBookIdAsync(int bookId);
     Task<List<Review>> GetByReviewerIdAsync(int reviewerId);
     Task AddAsync(Review review);
+    Task RemoveByBookIdAsync(int bookId);
 }
